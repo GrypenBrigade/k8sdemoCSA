@@ -1,0 +1,124 @@
+# 2048 deployment and service
+# Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: 2048service
+  labels:
+    app: 2048service
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    name: http
+  selector: 
+    app: 2048game
+  type: ClusterIP
+
+---
+
+# Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 2048game
+spec:
+  selector:
+    matchLabels:
+      app: 2048game
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: 2048game
+    spec: 
+      containers: 
+      - name: 2048-container
+        image: "blackicebird/2048"
+        ports:
+        - containerPort: 80
+
+---
+
+# Snake deployment and service
+# Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: Snakeservice
+  labels:
+    app: Snakeservice
+spec:
+  ports:
+  - port: 80
+    targetPort: 80
+    name: http
+  selector: 
+    app: Snakegame
+  type: ClusterIP
+
+---
+
+#Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Snakegame
+spec:
+  selector:
+    matchLabels:
+      app: Snakegame
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: Snakegame
+    spec: 
+      containers: 
+      - name: Snake-container
+        image: "aschil/snake"
+        ports:
+        - containerPort: 80
+
+---
+
+# Ingress
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: 2048Snake-Ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /2048(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: 2048service
+            port:
+              number: 80
+      - path: /snake(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: Snakeservice
+            port: 
+              number: 80
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: Snakeservice
+            port:
+              number: 80
