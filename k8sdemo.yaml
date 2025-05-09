@@ -93,32 +93,31 @@ kind: Ingress
 metadata:
   name: twofoursnake-ingress
   annotations:
-    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
-      - path: /twofour(/|$)(.*)
+      - path: /twofour
         pathType: Prefix
         backend:
           service:
             name: twofour-service
             port:
               number: 80
-      - path: /snake(/|$)(.*)
+      - path: /snake
         pathType: Prefix
         backend:
           service:
             name: snake-service
-            port: 
+            port:
               number: 80
-      - path: /(.*)
+      - path: /
         pathType: Prefix
         backend:
           service:
-            name: snake-service
+            name: snake-service  # Default service
             port:
               number: 80
