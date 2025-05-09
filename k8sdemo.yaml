@@ -4,16 +4,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: 2048service
+  name: twofour-service
   labels:
-    app: 2048service
+    app: twofour-service
 spec:
   ports:
   - port: 80
     targetPort: 80
     name: http
   selector: 
-    app: 2048game
+    app: twofour-game
   type: ClusterIP
 
 ---
@@ -23,16 +23,16 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: 2048game
+  name: twofour-game
 spec:
   selector:
     matchLabels:
-      app: 2048game
+      app: twofour-game
   replicas: 1
   template:
     metadata:
       labels:
-        app: 2048game
+        app: twofour-game
     spec: 
       containers: 
       - name: 2048-container
@@ -48,16 +48,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: Snakeservice
+  name: snake-service
   labels:
-    app: Snakeservice
+    app: snake-service
 spec:
   ports:
   - port: 80
     targetPort: 80
     name: http
   selector: 
-    app: Snakegame
+    app: snake-game
   type: ClusterIP
 
 ---
@@ -67,19 +67,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Snakegame
+  name: snake-game
 spec:
   selector:
     matchLabels:
-      app: Snakegame
+      app: snake-game
   replicas: 1
   template:
     metadata:
       labels:
-        app: Snakegame
+        app: snake-game
     spec: 
       containers: 
-      - name: Snake-container
+      - name: snake-container
         image: "aschil/snake"
         ports:
         - containerPort: 80
@@ -91,7 +91,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: 2048Snake-Ingress
+  name: twofoursnake-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
@@ -101,24 +101,24 @@ spec:
   rules:
   - http:
       paths:
-      - path: /2048(/|$)(.*)
+      - path: /twofour(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: 2048service
+            name: twofour-service
             port:
               number: 80
       - path: /snake(/|$)(.*)
         pathType: Prefix
         backend:
           service:
-            name: Snakeservice
+            name: snake-service
             port: 
               number: 80
       - path: /(.*)
         pathType: Prefix
         backend:
           service:
-            name: Snakeservice
+            name: snake-service
             port:
               number: 80
