@@ -36,7 +36,7 @@ spec:
     spec: 
       containers: 
       - name: 2048-container
-        image: "cnrock/2048"
+        image: "evilroot/docker-2048"
         ports:
         - containerPort: 80
         readinessProbe:
@@ -109,24 +109,6 @@ spec:
           periodSeconds: 20
 
 ---
-# Issuer
-
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: cert-issuer
-spec:
-  acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: robloxbullcrap@gmail.com
-    privateKeySecretRef:
-      name: supersecret-key
-    solvers:
-      - http01:
-          ingress:
-            ingressClassName: nginx
-
----
 
 # Ingress
 
@@ -134,17 +116,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: twofoursnake-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: "cert-issuer" 
 spec:
-  ingressClassName: nginx
-  tls:
-  - hosts:
-    - grypentest.me
-    secretName: supersecret-key
+  ingressClassName: ngrok
   rules:
-  - host: grypentest.me
+  - host: integral-awake-seasnail.ngrok-free.app
     http:
       paths:
       - path: /twofour
