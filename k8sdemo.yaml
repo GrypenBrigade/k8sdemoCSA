@@ -136,11 +136,16 @@ metadata:
   name: twofoursnake-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    cert-manager.io/cluster-issuer: "supersecret-key" 
+    cert-manager.io/cluster-issuer: "cert-issuer" 
 spec:
   ingressClassName: nginx
+  tls:
+  - hosts:
+    - grypentest.me
+    secretName: supersecret-key
   rules:
-  - http:
+  - host: grypentest.me
+    http:
       paths:
       - path: /twofour
         pathType: Prefix
