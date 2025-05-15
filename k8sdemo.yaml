@@ -28,7 +28,7 @@ spec:
   selector:
     matchLabels:
       app: twofour-game
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -36,7 +36,7 @@ spec:
     spec: 
       containers: 
       - name: 2048-container
-        image: "kubespheredev/2048"
+        image: "cnrock/2048"
         ports:
         - containerPort: 80
         readinessProbe:
@@ -84,7 +84,7 @@ spec:
   selector:
     matchLabels:
       app: snake-game
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -109,6 +109,24 @@ spec:
           periodSeconds: 20
 
 ---
+# Issuer
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cert-issuer
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: robloxbullcrap@gmail.com
+    privateKeySecretRef:
+      name: supersecret-key
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
+
+---
 
 # Ingress
 
@@ -117,8 +135,8 @@ kind: Ingress
 metadata:
   name: twofoursnake-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "supersecret-key" 
 spec:
   ingressClassName: nginx
   rules:
