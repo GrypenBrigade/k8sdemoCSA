@@ -122,7 +122,7 @@ spec:
   - host: integral-awake-seasnail.ngrok-free.app
     http:
       paths:
-      - path: /twofour
+      - path: /twofour(/|$)(.*)
         pathType: Prefix
         backend:
           service:
