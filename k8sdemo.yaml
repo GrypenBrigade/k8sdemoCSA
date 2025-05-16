@@ -36,7 +36,7 @@ spec:
     spec: 
       containers: 
       - name: 2048-container
-        image: "evilroot/docker-2048"
+        image: "containerizedentity/docker-2048"
         ports:
         - containerPort: 80
         readinessProbe:
@@ -127,13 +127,6 @@ spec:
         backend:
           service:
             name: twofour-service
-            port:
-              number: 80
-      - path: /snake
-        pathType: Prefix
-        backend:
-          service:
-            name: snake-service
             port:
               number: 80
       - path: /
