@@ -30,7 +30,7 @@ spec:
   selector:
     matchLabels:
       app: snake-game
-  replicas: 2
+  replicas: 3
   template:
     metadata:
       labels:
