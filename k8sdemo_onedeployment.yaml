@@ -1,0 +1,77 @@
+# One deployment with two replicas and a service
+
+# Snake deployment and service
+# Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: snake-service
+  labels:
+    app: snake-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    name: http
+  selector: 
+    app: snake-game
+  type: ClusterIP
+
+---
+
+# Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snake-game
+spec:
+  selector:
+    matchLabels:
+      app: snake-game
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: snake-game
+    spec: 
+      containers: 
+      - name: snake-container
+        image: "aschil/snake"
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
+
+---
+
+# Ingress
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: twofoursnake-ingress
+spec:
+  ingressClassName: ngrok
+  rules:
+  - host: integral-awake-seasnail.ngrok-free.app
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: snake-service
+            port:
+              number: 80
